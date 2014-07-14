@@ -7,7 +7,7 @@ _p.def_print_style_body = "html, body, div, span, td, p { \
 		font-size: inherit; \
 	}\
 	.page-settings {\
-		font-family: Arial, Helvetica Neue, Sans;\
+		font-family: Helvetica, 'Open Sans', sans-serif;\
 		font-size: 9pt;\
 	}\
 	pre { margin:0; padding:0;}";
@@ -38,6 +38,7 @@ _p.preview = function(html) {
 		return;
 	}
 	w.document.write(html);
+	w.document.close();
 	return w
 }
 
@@ -524,7 +525,7 @@ $.extend(_p, {
 
 							case 'HTML':
 								var div = $a(me.layout.cur_cell, 'div');
-								div.innerHTML = field.options;
+								div.innerHTML = cstr(field.options);
 								break;
 
 							case 'Code':

@@ -44,3 +44,5 @@ class DocstatusTransitionError(ValidationError): pass
 class TimestampMismatchError(ValidationError): pass
 class EmptyTableError(ValidationError): pass
 class LinkExistsError(ValidationError): pass
+class InvalidEmailAddressError(ValidationError): pass
+class TemplateNotFoundError(ValidationError): pass

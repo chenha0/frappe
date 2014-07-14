@@ -32,7 +32,7 @@ _classes = {}
 def get_controller(doctype):
 	if not doctype in _classes:
 		module = load_doctype_module(doctype)
-		classname = doctype.replace(" ", "")
+		classname = doctype.replace(" ", "").replace("-", "")
 		if hasattr(module, classname):
 			_class = getattr(module, classname)
 			if issubclass(_class, Document):
@@ -84,7 +84,7 @@ class Document(BaseDocument):
 		else:
 			d = frappe.db.get_value(self.doctype, self.name, "*", as_dict=1)
 			if not d:
-				frappe.throw(("{0} {1} not found").format(_(self.doctype), self.name), frappe.DoesNotExistError)
+				frappe.throw(_("{0} {1} not found").format(_(self.doctype), self.name), frappe.DoesNotExistError)
 			self.update(d)
 
 		if self.name=="DocType" and self.doctype=="DocType":
@@ -504,7 +504,7 @@ class Document(BaseDocument):
 			if doc.parentfield:
 				msg = _("Incorrect value in row {0}: {1} must be {2} {3}".format(doc.idx, label, condition_str, val2))
 			else:
-				msg = _("Incorrect value: {1} must be {2} {3}".format(label, condition_str, val2))
+				msg = _("Incorrect value: {0} must be {1} {2}".format(label, condition_str, val2))
 
 			# raise passed exception or True
 			msgprint(msg, raise_exception=raise_exception or True)

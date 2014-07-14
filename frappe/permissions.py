@@ -2,7 +2,7 @@
 # MIT License. See license.txt
 
 from __future__ import unicode_literals
-import frappe
+import frappe, copy
 from frappe import _, msgprint
 from frappe.utils import cint
 
@@ -49,6 +49,30 @@ def has_permission(doctype, ptype="read", doc=None, verbose=True, user=None):
 			return False
 
 	return True
+
+def get_doc_permissions(doc, verbose=False, user=None):
+	if not user: user = frappe.session.user
+
+	if frappe.is_table(doc.doctype):
+		return {"read":1, "write":1}
+
+	meta = frappe.get_meta(doc.doctype)
+
+	role_permissions = copy.deepcopy(get_role_permissions(meta, user=user))
+
+	if not cint(meta.is_submittable):
+		role_permissions["submit"] = 0
+
+	if not cint(meta.allow_import):
+		role_permissions["import"] = 0
+
+	if not user_has_permission(doc, verbose=verbose, user=user):
+		# no user permissions, switch off all user-level permissions
+		for ptype in role_permissions:
+			if role_permissions["apply_user_permissions"].get(ptype):
+				role_permissions[ptype] = 0
+
+	return role_permissions
 
 def get_role_permissions(meta, user=None):
 	if not user: user = frappe.session.user
@@ -128,13 +152,18 @@ def can_set_user_permissions(doctype, docname=None):
 
 	return True
 
-def set_user_permission_if_allowed(doctype, name, user):
+def set_user_permission_if_allowed(doctype, name, user, with_message=False):
 	if get_role_permissions(frappe.get_meta(doctype), user).set_user_permissions!=1:
-		add_user_permission(doctype, name, user)
+		add_user_permission(doctype, name, user, with_message)
 
-def add_user_permission(doctype, name, user):
+def add_user_permission(doctype, name, user, with_message=False):
 	if name not in frappe.defaults.get_user_permissions(user).get(doctype, []):
+		if not frappe.db.exists(doctype, name):
+			frappe.throw(_("{0} {1} not found").format(_(doctype), name), frappe.DoesNotExistError)
+
 		frappe.defaults.add_default(doctype, name, user, "User Permission")
+	elif with_message:
+		msgprint(_("Permission already set"))
 
 def remove_user_permission(doctype, name, user, default_value_name=None):
 	frappe.defaults.clear_default(key=doctype, value=name, parent=user, parenttype="User Permission",

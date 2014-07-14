@@ -2,7 +2,7 @@ frappe.pages['user-permissions'].onload = function(wrapper) {
 	frappe.ui.make_app_page({
 		parent: wrapper,
 		title: "User Permissions Manager",
-		icon: "icon-user",
+		icon: "icon-shield",
 		single_column: true
 	});
 	$(wrapper).find(".layout-main").html("<div class='user-settings' style='min-height: 200px;'></div>\
@@ -45,6 +45,10 @@ frappe.UserPermissions = Class.extend({
 	},
 	make: function() {
 		var me = this;
+		this.wrapper.appframe.add_primary_action("Role Permissions", function() {
+			frappe.route_options = { doctype: me.get_doctype() || "" };
+			frappe.set_route("permission-manager");
+		}, "icon-lock");
 		return frappe.call({
 			module:"frappe.core",
 			page:"user_permissions",
@@ -181,11 +185,14 @@ frappe.UserPermissions = Class.extend({
 		this.body.empty();
 		this.prop_list = prop_list;
 		if(!prop_list || !prop_list.length) {
-			this.body.html("<div class='alert alert-info'>"+__("No User Permissions found.")+"</div>");
+			this.add_message(__("No User Permissions found."));
 		} else {
 			this.show_user_permissions_table();
 		}
 		this.show_add_user_permission();
+	},
+	add_message: function(txt) {
+		$('<div class="alert alert-info">' + txt + '</div>').appendTo(this.body);
 	},
 	refresh: function() {
 		var me = this;

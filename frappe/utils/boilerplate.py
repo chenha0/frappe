@@ -119,6 +119,12 @@ app_version = "0.0.1"
 #	"Role": "home_page"
 # }}
 
+# Generators
+# ----------
+
+# automatically create page for each record of this doctype
+# website_generators = ["Web Page"]
+
 # Installation
 # ------------
 
@@ -187,7 +193,7 @@ desktop_template = """from frappe import _
 
 def get_data():
 	return {{
-		"{app_name}": {{
+		"{app_title}": {{
 			"color": "{app_color}",
 			"icon": "{app_icon}",
 			"type": "module",

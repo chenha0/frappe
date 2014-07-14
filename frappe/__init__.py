@@ -94,6 +94,7 @@ def init(site, sites_path=None):
 	local.site_path = os.path.join(sites_path, site)
 
 	local.request_method = request.method if request else None
+	local.request_ip = None
 	local.response = _dict({"docs":[]})
 
 	local.conf = _dict(get_site_config())
@@ -347,15 +348,7 @@ def get_meta(doctype, cached=True):
 
 def delete_doc(doctype=None, name=None, force=0, ignore_doctypes=None, for_reload=False, ignore_permissions=False):
 	import frappe.model.delete_doc
-
-	if not ignore_doctypes:
-		ignore_doctypes = []
-
-	if isinstance(name, list):
-		for n in name:
-			frappe.model.delete_doc.delete_doc(doctype, n, force, ignore_doctypes, for_reload, ignore_permissions)
-	else:
-		frappe.model.delete_doc.delete_doc(doctype, name, force, ignore_doctypes, for_reload, ignore_permissions)
+	frappe.model.delete_doc.delete_doc(doctype, name, force, ignore_doctypes, for_reload, ignore_permissions)
 
 def delete_doc_if_exists(doctype, name):
 	if db.exists(doctype, name):
@@ -377,7 +370,7 @@ def get_module(modulename):
 	return importlib.import_module(modulename)
 
 def scrub(txt):
-	return txt.replace(' ','_').replace('-', '_').replace('/', '_').lower()
+	return txt.replace(' ','_').replace('-', '_').lower()
 
 def unscrub(txt):
 	return txt.replace('_',' ').replace('-', ' ').title()
