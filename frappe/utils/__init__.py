@@ -177,9 +177,9 @@ def now():
 	"""return current datetime as yyyy-mm-dd hh:mm:ss"""
 	if getattr(frappe.local, "current_date", None):
 		return getdate(frappe.local.current_date).strftime("%Y-%m-%d") + " " + \
-			now_datetime().strftime('%H:%M:%S.%f')
+			now_datetime().strftime('%H:%M:%S')
 	else:
-		return now_datetime().strftime('%Y-%m-%d %H:%M:%S.%f')
+		return now_datetime().strftime('%Y-%m-%d %H:%M:%S')
 
 def nowdate():
 	"""return current date as yyyy-mm-dd"""

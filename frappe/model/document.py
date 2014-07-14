@@ -277,8 +277,8 @@ class Document(BaseDocument):
 				self.check_docstatus_transition(tmp.docstatus)
 
 			if conflict:
-				frappe.msgprint(_("Error: Document has been modified after you have opened it") \
-				+ (" (%s, %s). " % (modified, self.modified)) \
+				frappe.msgprint(_("Error****: Document has been modified after you have opened it") \
+				+ (" (%s, %s). " % (cstr(modified), cstr(self.modified))) \
 				+ _("Please refresh to get the latest document."),
 					raise_exception=frappe.TimestampMismatchError)
 		else:
